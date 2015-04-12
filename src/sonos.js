@@ -8,21 +8,24 @@
     var soapData = makeSOAPDataObject("GetTransportInfo", "GetTransportInfo");
     makeRequestToSonosZone(soapData, function(request) {
       isPlaying = request.response.indexOf("PLAYING") > -1;
-      console.log("is sonos playing: " + isPlaying);
     });
   }());
   
   function doAction(eventType, cmdType) {
-    return function() {      
-      if(eventType === "play" && isPlaying) {
-        isPlaying = false;
-        eventType = "pause";
-        cmdType = "Pause";
-      } else if(eventType === "play" && !isPlaying) {
-        isPlaying = true;
-      }  
+    return function() {
       
-      console.log("event: " + eventType);
+      if(eventType === "play" || eventType === "pause") {
+        if(isPlaying) {
+          isPlaying = false;
+          eventType = "pause";
+          cmdType = "Pause";
+        } else {
+          isPlaying = true;
+          eventType = "play";
+          cmdType = "Play";
+        }  
+      }
+      
       var soapData = makeSOAPDataObject(eventType, cmdType);
       makeRequestToSonosZone(soapData);
     };
